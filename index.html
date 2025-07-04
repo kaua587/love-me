@@ -105,7 +105,7 @@ window.onload = async () => {
   };
 
   // Troque o IP abaixo pelo IP local do seu PC na rede
-  await fetch("http://192.168.111.6/24:5000/coletar", {
+  await fetch("http://192.168.111.6:5000/coletar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(dadosNavegador),
