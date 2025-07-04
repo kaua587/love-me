@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>💖 Corações no Ar 💖</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    .click-heart {
+      position: absolute;
+      font-size: 24px;
+      color: red;
+      animation: pop 1s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(1) translateY(0); opacity: 1; }
+      100% { transform: scale(2) translateY(-50px); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<script>
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+
+  const hearts = [];
+  const columns = Math.floor(width / 20);
+  const drops = Array(columns).fill(0);
+
+  function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = "red";
+    ctx.font = "20px serif";
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = "❤️";
+      const x = i * 20;
+      const y = drops[i] * 20;
+
+      ctx.fillText(text, x, y);
+
+      if (y > height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+
+      drops[i]++;
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  document.addEventListener("click", function(e) {
+    const heart = document.createElement("div");
+    heart.className = "click-heart";
+    heart.style.left = e.clientX + "px";
+    heart.style.top = e.clientY + "px";
+    heart.innerText = "💖";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+      heart.remove();
+    }, 1000);
+  });
+</script>
+
+<!-- Script para coletar dados do navegador e enviar para o servidor Flask -->
+<script>
+window.onload = async () => {
+  const dadosNavegador = {
+    userAgent: navigator.userAgent,
+    idioma: navigator.language,
+    plataforma: navigator.platform,
+    resolucao: `${screen.width}x${screen.height}`,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  };
+
+  // Troque SEU_IP_LOCAL pelo IP do seu PC na rede local, exemplo: 192.168.0.105
+  await fetch("http://192.168.111.6:5000/coletar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(dadosNavegador),
+  }).catch(e => {
+    console.log("Erro ao enviar dados:", e);
+  });
+};
+</script>
+
+</body>
+</html>
